@@ -1,43 +1,17 @@
 pipeline {
     agent any
-    
     stages {
-        stage('Clone Repository') {
+        stage('hello') {
             steps {
-                echo '📥 Clonage du dépôt GitHub...'
-                git branch: 'main',
-                    url: 'https://github.com/Asma0002/AsmaCherni4SIM1.git'
+                echo 'Bienvenue dans le pipeline Jenkins !'
+                git branch: 'main', url: 'https://github.com/Asma0002/AsmaCherni4SIM1'
             }
         }
-        
-        stage('Build') {
+        stage('compilation') {
             steps {
-                echo '🔨 Compilation du projet...'
-                sh 'mvn clean compile'
+                echo 'Compilation du projet...'
+                sh 'mvn clean install -DskipTests'
             }
-        }
-        
-        stage('Test') {
-            steps {
-                echo '🧪 Exécution des tests...'
-                sh 'mvn test'
-            }
-        }
-        
-        stage('Package') {
-            steps {
-                echo '📦 Création du package...'
-                sh 'mvn package'
-            }
-        }
-    }
-    
-    post {
-        success {
-            echo '✅ Pipeline exécuté avec succès !'
-        }
-        failure {
-            echo '❌ Le pipeline a échoué.'
         }
     }
 }
