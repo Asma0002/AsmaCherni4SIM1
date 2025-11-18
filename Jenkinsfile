@@ -6,7 +6,7 @@ pipeline {
             steps {
                 echo '📥 Clonage du dépôt GitHub...'
                 git branch: 'main',
-                    url: 'https://github.com/VOTRE_USERNAME/student-management.git'
+                    url: 'https://github.com/Asma0002/student-management.git'
             }
         }
         
