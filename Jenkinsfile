@@ -6,7 +6,7 @@ pipeline {
     }
     
     environment {
-        DOCKERHUB_USER = 'asma0000/devops'
+        DOCKERHUB_USER = 'asma0000'
         IMAGE_NAME = 'student-management'
     }
     
