@@ -26,12 +26,7 @@ pipeline {
             }
         }
         
-        stage('Test') {
-            steps {
-                echo '🧪 Tests (skipped)...'
-                sh 'mvn test -DskipTests'
-            }
-        }
+
         
         stage('Package') {
             steps {
@@ -61,13 +56,7 @@ pipeline {
             }
         }
         
-        stage('Archive') {
-            steps {
-                echo '📂 Archivage des artifacts...'
-                archiveArtifacts artifacts: 'target/*.jar', fingerprint: true
-            }
-        }
-    }
+
     
     post {
         success {
