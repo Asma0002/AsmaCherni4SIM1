@@ -1,75 +1,43 @@
 pipeline {
     agent any
-    
-    triggers {
-        pollSCM('H/2 * * * *')  // Vérifie GitHub toutes les 2 minutes
-    }
-    
+
     environment {
-        DOCKERHUB_USER = 'asma0000'
-        IMAGE_NAME = 'student-management'
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')   // ⚠️ Assure-toi que l'ID est correct dans Jenkins
+        IMAGE_NAME = "asma0000/student-management"
     }
-    
+
     stages {
-        
-        stage('Git Checkout') {
+
+        stage('Checkout') {
             steps {
-                git branch: 'main', url: 'https://github.com/Asma0002/AsmaCherni4SIM1'
+                checkout scm
             }
         }
-        
-        stage('Maven Compile') {
+
+        stage('Build JAR') {
             steps {
-                sh 'mvn compile'
+                // Donner la permission d'exécuter mvnw
+                sh 'chmod +x mvnw'
+                sh './mvnw clean package -DskipTests'
             }
         }
-        
-        stage('Maven Package') {
-            steps {
-                sh 'mvn clean package -DskipTests'
-            }
-        }
-        
+
         stage('Build Docker Image') {
             steps {
-                sh """
-                    docker build -t ${DOCKERHUB_USER}/${IMAGE_NAME}:latest .
-                    docker tag ${DOCKERHUB_USER}/${IMAGE_NAME}:latest ${DOCKERHUB_USER}/${IMAGE_NAME}:${BUILD_NUMBER}
-                """
+                sh "docker build -t ${IMAGE_NAME}:latest ."
             }
         }
-        
-        stage('Docker Login') {
+
+        stage('Login to Docker Hub') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-credentials',
-                                                 usernameVariable: 'USER',
-                                                 passwordVariable: 'PASS')]) {
-                    sh """
-                        echo "\$PASS" | docker login -u "\$USER" --password-stdin
-                    """
-                }
+                sh "echo $DOCKERHUB_CREDENTIALS_PSW | docker login -u $DOCKERHUB_CREDENTIALS_USR --password-stdin"
             }
         }
-        
-        stage('Docker Push') {
+
+        stage('Push Image') {
             steps {
-                sh """
-                    docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:latest
-                    docker push ${DOCKERHUB_USER}/${IMAGE_NAME}:${BUILD_NUMBER}
-                """
+                sh "docker push ${IMAGE_NAME}:latest"
             }
-        }
-    }
-    
-    post {
-        success {
-            echo '✅ Build réussi ! Image Docker créée et poussée sur Docker Hub.'
-        }
-        failure {
-            echo '❌ Le build a échoué. Vérifiez les logs.'
-        }
-        always {
-            sh 'docker logout'
         }
     }
 }
