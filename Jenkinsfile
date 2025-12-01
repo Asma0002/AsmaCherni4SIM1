@@ -2,7 +2,7 @@ pipeline {
     agent any
 
     environment {
-        DOCKERHUB_CREDENTIALS = credentials('dockerhub-creds')   // ⚠️ Assure-toi que l'ID est correct dans Jenkins
+        DOCKERHUB_CREDENTIALS = credentials('dockerhub-credentials')   // ⚠️ Assure-toi que l'ID est correct dans Jenkins
         IMAGE_NAME = "asma0000/student-management"
     }
 
